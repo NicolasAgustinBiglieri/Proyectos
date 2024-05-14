@@ -7,7 +7,8 @@ def user_schema(user) -> dict:
             "dateofbirth": user["dateofbirth"],
             "country": user["country"],
             "city": user["city"],
-            "email_verif": user["email_verif"]}
+            "email_verif": user["email_verif"],
+            "registered_date": user["registered_date"]}
 
 
 def users_schema(users) -> list:
@@ -24,6 +25,7 @@ def user_pass_schema(user) -> dict:
             "country": user["country"],
             "city": user["city"],
             "email_verif": user["email_verif"],
+            "registered_date": user["registered_date"],
             "password": user["password"]}
 
 

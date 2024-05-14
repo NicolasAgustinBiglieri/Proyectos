@@ -1,5 +1,4 @@
 """
-03/04/2024
 Comenzamos proyecto de API Ecommerce con FastAPI Python
 
 1: Planificar una API:
@@ -12,7 +11,7 @@ Comenzamos proyecto de API Ecommerce con FastAPI Python
 
 -Crear diagrama de flujo de la API
 -Incluir seguridad en el diseño (identificación, autenticación, autorización y cifrado)
--Decidir qué arquitectura se utilizará (SOAP o REST)
+-Decidir qué arquitectura se utilizará (SOAP o REST) -> REST
 -Planificar portal para desarrolladores ?¿?¿
 -Crear el prototipo
 
@@ -29,6 +28,9 @@ En un segundo paso, implementar un chat para esos usuarios
 
 En un tercer paso, que puedan comprar los productos
 
+
+
+https://temp-mail.org/
 
 """
 

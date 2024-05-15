@@ -1,25 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from passlib.context import CryptContext
 from jose import jwt, JWTError
-from datetime import datetime, timedelta, timezone
 from db.models.user import User, User_wPass
 from db.schemas.user import user_schema, users_schema, user_pass_schema
 from db.client import db_client
 from bson import ObjectId
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import os
-from dotenv import load_dotenv
-from datetime import datetime
-
+from config import settings
 
 router = APIRouter(prefix="/users", tags=["Users"])
-
-
-load_dotenv() # Cargamos variables de entorno
-SECRET = os.getenv("SECRET") # Guardamos la semilla en la variable que utilizaremos
 
 # Búsqueda de usuarios
 
@@ -38,25 +26,11 @@ def search_user_pass(field: str, key):
         return {"Error": "No se ha encontrado el usuario"}
     
 
-# Login
-
 oauth2 = OAuth2PasswordBearer(tokenUrl="auth/login") 
-# Creamos el algoritmo de encriptación 
-ALGORITHM = "HS256" 
-# Ponemos duración del access token para cuando el post devuelva el access token
-ACCESS_TOKEN_DURATION = 1
-
-# Creamos semilla para la encriptacion utilizando "openssl rand -hex 32" en una terminal
-# La semilla la guardamos en .env, el cual está agregado a .gitignore para protegerlo
-
-# Creamos contexto de encriptación. Cuando verifiquemos la contraseña ingresada 
-# con la encriptada en la base de datos con crypt.verify usaremos este esquema
-crypt = CryptContext(schemes="bcrypt")
+# crypt = CryptContext(schemes="bcrypt")
 
 # Creamos una operación de autenticación para enviar usuario y contraseña
 # A la función login le ponemos el parámetro form de tipo OAuth2PasswordRequestForm
-
-
 async def auth_user(token: str = Depends(oauth2)):
     
     exception = HTTPException(
@@ -64,7 +38,7 @@ async def auth_user(token: str = Depends(oauth2)):
                     detail="Credenciales de autenticación inválidas",
                     headers={"WWW-Authenticate": "Bearer"})
     try:
-        username = jwt.decode(token, SECRET, algorithms= ALGORITHM).get("sub")
+        username = jwt.decode(token, settings.SECRET, algorithms= settings.ALGORITHM).get("sub")
         if username is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Credenciales inválidas")
     except JWTError:

@@ -2,21 +2,15 @@ import smtplib
 from jose import jwt
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import os
-from dotenv import load_dotenv
-
-load_dotenv() # Cargamos variables de entorno
-SECRET = os.getenv("SECRET") # Guardamos la semilla en la variable que utilizaremos
-
-ALGORITHM = "HS256" 
+from config import settings
 
 def create_verify_token(username, email):
     verification_token = {"username": username, "email": email}
-    return {"verification_token": jwt.encode(verification_token, SECRET, algorithm=ALGORITHM), "token_type": "bearer"}
+    return jwt.encode(verification_token, settings.SECRET, algorithm=settings.ALGORITHM)
 
 def send_email_verification(email, token):
     sender_email = "aguprograma@gmail.com"
-    password = os.getenv("EMAIL_PASSWORD")
+    password = settings.EMAIL_PASSWORD
 
     subject = "Verificación de registro"
     body = f"Por favor, haga clic en el siguiente enlace para verificar su registro: http://127.0.0.1:8000/auth/verify?token={token}"

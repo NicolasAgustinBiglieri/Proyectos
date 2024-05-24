@@ -1,10 +1,9 @@
 from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta, timezone
-from db.client import db_client
-from db.schemas.user import user_pass_schema
+from db.client import users_collection
 from db.models.user import User, User_wPass
-from db.schemas.user import user_schema, users_schema, user_pass_schema
+from db.schemas.user import user_schema, user_pass_schema
 from config import settings
 
 
@@ -25,20 +24,20 @@ def create_access_token(username):
     return jwt.encode(access_token, settings.SECRET, algorithm=settings.ALGORITHM)
 
 
-# Búsqueda de usuarios
+# Búsqueda de usuarios para registro y auth, si no encuentra devuelve None
 def search_user(field: str, key):
     try:
-        user = user_schema(db_client.find_one({field: key}))
+        user = user_schema(users_collection.find_one({field: key}))
         return User(**user)
     except:
-        return {"Error": "No se ha encontrado el usuario"}
+        return None
     
 def search_user_pass(field: str, key):
     try:
-        user = user_pass_schema(db_client.find_one({field: key}))
+        user = user_pass_schema(users_collection.find_one({field: key}))
         return User_wPass(**user)
     except:
-        return {"Error": "No se ha encontrado el usuario"}
+        return None
     
 
 

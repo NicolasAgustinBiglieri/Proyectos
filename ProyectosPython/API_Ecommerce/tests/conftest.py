@@ -16,4 +16,3 @@ def db_client():
 @pytest.fixture(scope="function", autouse=True)
 def clear_db(db_client):
     db_client.get_database("local").drop_collection("test_users")
-    # print("Eliminamos coleccion test")

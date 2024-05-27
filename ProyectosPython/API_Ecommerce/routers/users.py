@@ -9,7 +9,7 @@ from bson import ObjectId
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-# Get para prueba de token de autorización temporal
+# Get para prueba de token de autorización temporal al loguear
 @router.get("/me")
 async def me(user: User = Depends(auth_user)):
     return user

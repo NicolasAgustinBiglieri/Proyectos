@@ -63,9 +63,10 @@ async def verify_token(token: str):
     return {"message": "Token verificado exitosamente"}
 
 
+# Login
 @router.post("/auth/login")
-async def login(user_pass: OAuth2PasswordRequestForm = Depends()):
-    check_user = authenticate_user(user_pass.username, user_pass.password)
+async def login(user_and_pass: OAuth2PasswordRequestForm = Depends()):
+    check_user = authenticate_user(user_and_pass.username, user_and_pass.password)
     if not check_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Usuario o contraseña incorrectos")
     access_token = create_access_token(check_user.username)

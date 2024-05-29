@@ -22,7 +22,7 @@ This API handles user registration, email verification, authentication, and CRUD
     git clone https://github.com/NicolasAgustinBiglieri/Proyectos.git
     cd Proyectos
     cd ProyectosPython
-    cd API_Ecommerce
+    cd API_Users
 
 
 2. Create a virtual environment and install dependencies:
@@ -32,7 +32,7 @@ This API handles user registration, email verification, authentication, and CRUD
     # On Linux/Mac:
     source venv/bin/activate  
     # On Windows:
-    .\.venv\Scripts\Activate  # If your system has restrictions, use first: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
+    .venv\Scripts\Activate  # If your system has restrictions, use first: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
     
     pip install -r requirements.txt
     ```

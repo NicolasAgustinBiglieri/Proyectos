@@ -38,15 +38,16 @@ This API handles user registration, email verification, authentication, and CRUD
     ```
 
 3. Run the application:
-
+    ```
     uvicorn main:app --reload
-
+    ```
 
 ### Running Tests
 
 To run the tests, use:
-
+```
 pytest -v
+```
 
 ## Authentication and Authorization
 
@@ -89,7 +90,7 @@ EMAIL_ACCOUNT= "example@mail.com"
 EMAIL_PASSWORD= "examplePassword"
 ```
 
-You can create a secret with the following command: openssl rand -hex 32
+You can create a secret with the following command: ```openssl rand -hex 32```
 
 ## Dependencies
 

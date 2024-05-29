@@ -78,18 +78,18 @@ def test_delete_user(test_app: TestClient):
 # Creamos varios usuarios para el test_get_users
 def create_several_users(test_app: TestClient):
     user_data = {
-        "username": "test_username01","email": "test01@email.com","firstname": "Agu","lastname": "Uga",
-        "dateofbirth": "1994-01-28","country": "Arg","city": "BsAs","password": "nico"
+        "username": "test_username01","email": "test01@email.com","firstname": "test_firstname","lastname": "test_lastname",
+        "dateofbirth": "1990-01-01","country": "test_country","city": "test_city","password": "test_password"
     }
     response = test_app.post("/register", json=user_data)
     user_data = {
-        "username": "test_username02","email": "test02@email.com","firstname": "Agu","lastname": "Uga",
-        "dateofbirth": "1994-01-28","country": "Arg","city": "BsAs","password": "nico"
+        "username": "test_username02","email": "test02@email.com","firstname": "test_firstname","lastname": "test_lastname",
+        "dateofbirth": "1990-01-01","country": "test_country","city": "test_city","password": "test_password"
     }
     response = test_app.post("/register", json=user_data)
     user_data = {
-        "username": "test_username03","email": "test03@email.com","firstname": "Agu","lastname": "Uga",
-        "dateofbirth": "1994-01-28","country": "Arg","city": "BsAs","password": "nico"
+        "username": "test_username03","email": "test03@email.com","firstname": "test_firstname","lastname": "test_lastname",
+        "dateofbirth": "1990-01-01","country": "test_country","city": "test_city","password": "test_password"
     }
     response = test_app.post("/register", json=user_data)
 
@@ -97,8 +97,8 @@ def create_several_users(test_app: TestClient):
 # Creamos un usuario para el test_get_user y test_get_user_query
 def create_one_user(test_app: TestClient):
     user_data = {
-        "username": "test_username","email": "test01@email.com","firstname": "Agu","lastname": "Uga",
-        "dateofbirth": "1994-01-28","country": "Arg","city": "BsAs","password": "nico"
+        "username": "test_username","email": "test@email.com","firstname": "test_firstname","lastname": "test_lastname",
+        "dateofbirth": "1990-01-01","country": "test_country","city": "test_city","password": "test_password"
     }
     response = test_app.post("/register", json=user_data)
     return response.json()

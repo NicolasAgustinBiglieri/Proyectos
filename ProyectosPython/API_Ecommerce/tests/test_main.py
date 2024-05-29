@@ -13,24 +13,4 @@ def test_read_root(test_app):
     response = test_app.get("/")
     assert response.status_code == 200
     assert response.json() == "Bienvenido a Fakebook Marketplace"
-    
-
-# # Testeamos el registro de un usuario
-# def test_register_user(test_app):
-#     user_data = {
-#         "username": "test_username",
-#         "email": "test@email.com",
-#         "firstname": "Agu",
-#         "lastname": "Uga",
-#         "dateofbirth": "1994-01-28",
-#         "country": "Arg",
-#         "city": "BsAs",
-#         "password": "nico"
-#     }
-#     response = test_app.post("/register", json=user_data)
-#     # print(response.json())
-#     assert response.status_code == 200
-#     assert "id" in response.json()
-#     assert response.json()["username"] == "test_username"
-    
 

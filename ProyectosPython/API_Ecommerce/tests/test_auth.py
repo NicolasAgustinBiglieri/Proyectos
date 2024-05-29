@@ -35,7 +35,7 @@ def test_login(test_app: TestClient):
     # Creamos los datos para pasar de tipo OAuth2PasswordRequestForm
     login_data = {
         "username": user_registered["username"],
-        "password": "nico"
+        "password": "test_password"
     }
     # Ejecutamos el endpoint de login, el cual devuelve un token 
     response = test_app.post("/auth/login", data=login_data)
@@ -51,7 +51,7 @@ def test_user_me(test_app: TestClient):
     # Creamos los datos para pasar de tipo OAuth2PasswordRequestForm
     login_data = {
         "username": user_registered["username"],
-        "password": "nico"
+        "password": "test_password"
     }
     # Ejecutamos el endpoint de login, el cual devuelve un token 
     response = test_app.post("/auth/login", data=login_data)
@@ -72,12 +72,12 @@ def register_user(test_app: TestClient):
     user_data = {
         "username": "test_username",
         "email": "test@email.com",
-        "firstname": "Agu",
-        "lastname": "Uga",
-        "dateofbirth": "1994-01-28",
-        "country": "Arg",
-        "city": "BsAs",
-        "password": "nico"
+        "firstname": "test_firstname",
+        "lastname": "test_lastname",
+        "dateofbirth": "1990-01-01",
+        "country": "test_country",
+        "city": "test_city",
+        "password": "test_password"
     }
     response = test_app.post("/register", json=user_data)
     return response

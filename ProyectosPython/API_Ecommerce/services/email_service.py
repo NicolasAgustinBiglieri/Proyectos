@@ -9,7 +9,7 @@ def create_verify_token(username, email):
     return jwt.encode(verification_token, settings.SECRET, algorithm=settings.ALGORITHM)
 
 def send_email_verification(email, token):
-    sender_email = "aguprograma@gmail.com"
+    sender_email = settings.EMAIL_ACCOUNT
     password = settings.EMAIL_PASSWORD
 
     subject = "Verificación de registro"

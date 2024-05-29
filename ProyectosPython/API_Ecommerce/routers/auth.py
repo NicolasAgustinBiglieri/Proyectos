@@ -16,9 +16,45 @@ router = APIRouter(tags=["Auth"])
 oauth2 = OAuth2PasswordBearer(tokenUrl="auth/login") 
 crypt = CryptContext(schemes="bcrypt")
 
-# Registro de usuarios
+
+# Registro de usuario
 @router.post("/register", response_model=User_wPass)
 async def register(user: User_wPass):
+    """
+    Endpoint para registrar un nuevo usuario.
+
+    Permite registrar un nuevo usuario con los datos proporcionados en el cuerpo de la solicitud.
+    Devuelve los detalles del usuario registrado, incluido un identificador único asignado por el sistema.
+
+    Web para la generación de correos electrónicos temporales: https://temp-mail.org/
+    
+    Ejemplo de solicitud:
+    {
+        "username": "user123",
+        "email": "user@example.com",
+        "firstname": "Name",
+        "lastname": "Surname",
+        "dateofbirth": "1990-01-01",
+        "country": "Argentina",
+        "city": "Buenos Aires",
+        "password": "password123"
+    }
+
+    Ejemplo de respuesta:
+    {
+        "id": "1234567890",
+        "username": "user123",
+        "email": "user@example.com",
+        "firstname": "Name",
+        "lastname": "Surname",
+        "dateofbirth": "1990-01-01",
+        "country": "Argentina",
+        "city": "Buenos Aires",
+        "email_verif": False,
+        "registered_date": "2024-05-29T10:00:00",
+        "password": "$2b$12$1234567890abcdefghijklmno"
+    }
+    """
     # Verificar si el username ya está en uso
     if search_user_pass("username", user.username):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El username ya está en uso")
@@ -66,6 +102,18 @@ async def verify_token(token: str):
 # Login
 @router.post("/auth/login")
 async def login(user_and_pass: OAuth2PasswordRequestForm = Depends()):
+    """
+    Endpoint para iniciar sesión y obtener un token de acceso.
+
+    Permite a los usuarios iniciar sesión proporcionando su nombre de usuario y contraseña.
+    Devuelve un token de acceso válido para autorizar las solicitudes posteriores.
+
+    Ejemplo de solicitud:
+    {
+        "username": "your_username",
+        "password": "your_password"
+    }
+    """
     check_user = authenticate_user(user_and_pass.username, user_and_pass.password)
     if not check_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Usuario o contraseña incorrectos")

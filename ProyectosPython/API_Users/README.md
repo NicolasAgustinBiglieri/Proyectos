@@ -26,15 +26,28 @@ This API handles user registration, email verification, authentication, and CRUD
 
 
 2. Create a virtual environment and install dependencies:
-    ```
+    ```bash
     python -m venv .venv
     
     # On Linux/Mac:
     source venv/bin/activate  
     # On Windows:
-    .venv\Scripts\Activate  # If your system has restrictions, use first: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
+    .venv\Scripts\Activate  
     
+    If your system has restrictions, use first: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
+    
+    # Installation of dependencies:
+
     pip install -r requirements.txt
+
+    If you have issues with requirements.txt, you can install the packages manually:
+
+    pip install fastapi
+    pip install pymongo
+    pip install passlib
+    pip install python-jose
+    pip install pytest
+    pip install bcrypt
     ```
 
 3. Run the application:

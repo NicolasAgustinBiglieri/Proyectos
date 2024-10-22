@@ -57,7 +57,8 @@ To run this API, you’ll need the following:
     # On Windows:
     .venv\Scripts\activate  
     
-    # If your system has restrictions, use: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
+    # If your system has restrictions, use first:
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
     
     # Installation of dependencies:
 

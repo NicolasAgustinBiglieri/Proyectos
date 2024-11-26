@@ -1,10 +1,25 @@
+"""
+
+Endpoints de usuario (para rol de *USER*):
+    * POST:
+        "/register"             Registro para usuarios.
+        "/auth/login"           Iniciar sesión y obtener un token de acceso.
+        "/forgot-password"      Recuperar una contraseña olvidada.
+        "/reset-password"       Restablecer la contraseña utilizando un token de recuperación.
+
+
+
+
+"""
+
+
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from jose import jwt, JWTError
-from db.models.user import User_wPass, User, RoleEnum, ChangePasswordRequest, ResetPasswordRequest
+from db.models.user import User_wPass, User, RoleEnum,  ResetPasswordRequest
 # from db.schemas.user import user_pass_schema
-from services.auth_service import authenticate_user, create_access_token, search_user, validate_date
+from services.auth_service import authenticate_user, create_access_token, search_user, validate_date, search_user_pass
 from services.email_service import send_email_verification, create_verify_token, send_password_reset_email
 from services.users_service import change_user_password
 from config import settings
@@ -26,6 +41,7 @@ async def register(user: User_wPass):
 
     Permite registrar un nuevo usuario con los datos proporcionados en el cuerpo de la solicitud.
     Devuelve los detalles del usuario registrado, incluido un identificador único asignado por el sistema.
+    Se le asigna automáticamente el el role "r_user".
 
     Web para la generación de correos electrónicos temporales: https://temp-mail.org/
     
@@ -53,34 +69,42 @@ async def register(user: User_wPass):
         "city": "Buenos Aires",
         "email_verif": False,
         "registered_date": "2024-05-29T10:00:00",
+        "role": "r_user",
         "password": "$2b$12$1234567890abcdefghijklmno"
     }
     """
+    # print(user.role)
+    # print(user.username)
+    # print(user.email)
     # Verificar si el username ya está en uso
     if search_user("username", user.username):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El username ya está en uso")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El username ya está en uso")
     
     # Verificar si el email ya está en uso
     if search_user("email", user.email):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El email ya está en uso")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El email ya está en uso")
     
     # Validación de dateofbirth
     if user.dateofbirth and not validate_date(user.dateofbirth):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="dateofbirth no es una fecha válida.")
     
+    # Si un usuario intenta asignarse a sí mismo el rol de administrador
+    if user.role == RoleEnum.R_ADMIN:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="No puedes asignarte rol de administrador.")
+    
     try:
         # Hasheamos contraseña y la reemplazamos en la inserción 'INSERT TO'
         hashed_password = crypt.hash(user.password)
-
+        print(user)
         with CursorDelPool() as cursor:
             cursor.execute("""
-                INSERT INTO users (username, email, firstname, lastname, dateofbirth, country, city, password) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) 
-                RETURNING id, username, email, firstname, lastname, dateofbirth, country, city, email_verif, registered_date, password
+                INSERT INTO users (username, email, firstname, lastname, dateofbirth, country, city, role, password) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) 
+                RETURNING id, username, email, firstname, lastname, dateofbirth, country, city, email_verif, registered_date, role, password
                 """, 
-                (user.username, user.email, user.firstname, user.lastname, user.dateofbirth, user.country, user.city, hashed_password))
+                (user.username, user.email, user.firstname, user.lastname, user.dateofbirth, user.country, user.city, user.role, hashed_password))
             new_user = cursor.fetchone()
-
+            print(new_user)
         # Generar token de verificación para enviar email de verificación
         verification_token = create_verify_token(user.username, user.email)
         send_email_verification(user.email, verification_token)
@@ -215,8 +239,9 @@ async def forgot_password(email: str):
     if not search_user("email", email):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= "Usuario no encontrado")
 
+    log.info(f"Se ha solicitado recuperación de contraseña para el correo: {email}")
     send_password_reset_email(email)
-    return "A mail has sended to you with the instructions to reset your password."
+    return {"message": "A mail has sended to you with the instructions to reset your password."}
 
 
 @router.post("/reset-password")
@@ -239,13 +264,14 @@ async def reset_password(request: ResetPasswordRequest):
         email = payload.get('email')
 
         # Verificar si el usuario existe 
-        user = search_user("email", email)
+        user = search_user_pass("email", email)
         if not user or user.username != username:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado.")
 
         # Cambiar la contraseña del usuario
         change_user_password(user, request.new_pass)
 
+        log.info(f"Contraseña actualizada para el usuario {username}")
         return {"message": "Contraseña actualizada correctamente"}
 
     except JWTError:

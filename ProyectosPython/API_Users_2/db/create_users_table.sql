@@ -15,5 +15,6 @@ CREATE TABLE users (
     city VARCHAR(255),
     email_verif BOOLEAN DEFAULT FALSE,
     registered_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role VARCHAR(255), 
     password VARCHAR(255) NOT NULL
 );

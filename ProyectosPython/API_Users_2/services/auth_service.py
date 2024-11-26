@@ -25,8 +25,6 @@ def create_access_token(username):
     return jwt.encode(access_token, settings.SECRET, algorithm=settings.ALGORITHM)
 
 def validate_date(date_value: datetime) -> bool:
-    # print(date_value)
-    # print(datetime.now())
     if date_value > datetime.now():
         print("is false")
         return False
@@ -38,8 +36,10 @@ def search_user(field: str, key):
     query = f"SELECT id, username, email, firstname, lastname, dateofbirth, country, city, email_verif, registered_date, role FROM users WHERE {field} = %s"
     try:
         with CursorDelPool() as cursor:
+            log.debug(f"Se busca: {field}:{key}")
             cursor.execute(query, (key,))
             user = cursor.fetchone()
+            print(user)
             if user:
                 user_dict = dict(zip([desc[0] for desc in cursor.description], user))
                 return User(**user_dict)

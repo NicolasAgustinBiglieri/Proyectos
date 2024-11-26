@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field, EmailStr, StringConstraints, constr
+from pydantic import BaseModel, Field, EmailStr, StringConstraints, field_validator
 from datetime import datetime
 from typing import Annotated
 from enum import Enum
+import re
+from fastapi import HTTPException, status
 
 class RoleEnum(str, Enum):
     R_USER = "r_user"
@@ -14,6 +16,18 @@ LastnameType = Annotated[str, StringConstraints(min_length=1, max_length=50, pat
 CountryType = Annotated[str, StringConstraints(min_length=2, max_length=50, pattern=r'^[a-zA-Z\s]+$')]
 CityType = Annotated[str, StringConstraints(min_length=1, max_length=50, pattern=r'^[a-zA-Z\s]+$')]
 PasswordType = Annotated[str, StringConstraints(min_length=8, max_length=128, pattern=r"^[A-Za-z0-9_\d@$!%*./?&]+$")]
+
+# Función para validar criterios de contraseña
+def validate_password(value: str):
+    if len(value) < 8 or len(value) > 128:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='La contraseña debe tener entre 8 y 128 caracteres.')
+    if not re.search(r'[A-Z]', value):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='La contraseña debe contener al menos una letra mayúscula.')
+    if not re.search(r'\d', value):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='La contraseña debe contener al menos un número.')
+    if not re.search(r'[@$!%*?&]', value):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='La contraseña debe contener al menos un carácter especial.')
+    return value
 
 class User(BaseModel):
     """
@@ -46,7 +60,7 @@ class User(BaseModel):
     role: RoleEnum = RoleEnum.R_USER
     
     class Config:
-        extra = 'forbid'
+        extra = 'forbid' # Para prevenir inyección de datos no deseados, devuelve error si hay campos que no se esperan
 
 class User_wPass(User):
     """
@@ -54,10 +68,13 @@ class User_wPass(User):
 
     Es el modelo de usuario base, pero incluye la contraseña del usuario.
     """
-    # password: str
 
     password: PasswordType
 
+    @field_validator('password')
+    def validate_password_field(cls, value):
+        return validate_password(value)
+    
 class UserProfileUpdate(BaseModel):
     """
     Modelo de datos para que un usuario actualice sus datos no sensibles.
@@ -74,6 +91,10 @@ class UserProfileUpdate(BaseModel):
 class ResetPasswordRequest(BaseModel):
     token: str 
     new_pass: PasswordType
+    
+    @field_validator('new_pass')
+    def validate_password_field(cls, value):
+        return validate_password(value)
 
     class Config:
         extra = 'forbid'
@@ -82,5 +103,9 @@ class ChangePasswordRequest(BaseModel):
     old_pass: PasswordType = None
     new_pass: PasswordType
 
+    @field_validator('new_pass')
+    def validate_password_field(cls, value):
+        return validate_password(value)
+    
     class Config:
         extra = 'forbid'

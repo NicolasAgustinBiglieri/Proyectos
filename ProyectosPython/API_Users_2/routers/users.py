@@ -1,3 +1,48 @@
+"""
+
+Endpoints de usuario (para rol de *USER*) [prefix: "/users":]:
+    * GET:
+        "/me"       El usuario obtiene sus propios datos
+        "/"         Obtener listado de todos los usuarios y sus datos
+        "/{id}"     El usuario obtiene datos de un usuario en particular
+        "/query/"   El usuario obtiene datos de un usuario en particular por query
+
+
+        "/change-pass"      El usuario cambia su contraseña.
+        "/update-profile"   El usuario actualiza sus datos (solo algunos) (creo que no necesita pasar todos, probar)
+
+    
+Endpoints de usuario (para rol de *ADMIN*) [prefix: "/users":]:
+    * PUT:
+        "/"         Actualiza TODOS los datos de un usuario
+
+    * DELETE:
+        "/{id}"     Elimina al usuario en particular
+
+        
+
+Endpoints Implementados:
+
+Autenticación y Roles:
+
+auth_user: Verifica la autenticación del usuario.
+is_admin: Verifica si el usuario tiene el rol R_ADMIN.
+Operaciones CRUD de Usuarios:
+
+GET /me: Obtiene los datos del usuario autenticado.
+GET /: Obtiene un listado de todos los usuarios.
+GET /{id}: Obtiene un usuario específico por ID.
+GET /query/: Obtiene un usuario por query.
+PUT /: Actualiza un usuario (solo para administradores).
+DELETE /{id}: Elimina un usuario (solo para administradores).
+Funciones Específicas para Usuarios:
+
+PUT /change-pass: Permite a un usuario cambiar su contraseña.
+PUT /update-profile: Permite a un usuario actualizar su perfil.
+
+"""
+
+
 from fastapi import APIRouter, HTTPException, Depends, status
 from db.models.user import User, User_wPass, UserProfileUpdate, ChangePasswordRequest
 # from db.schemas.user import users_schema
@@ -178,7 +223,7 @@ async def change_pass(request: ChangePasswordRequest, logged_user: User = Depend
     if not check_old_pass:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "La contraseña actual es incorrecta")
     change_user_password(current_user, request.new_pass)
-    return search_user_pass("id", current_user.id) # {"message": "Contraseña actualizada correctamente"}
+    return search_user("id", current_user.id) # {"message": "Contraseña actualizada correctamente"}
 
 
 # Actualización de un usuario de su perfil

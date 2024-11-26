@@ -73,6 +73,8 @@ def send_password_reset_email(email):
             server.login(sender_email, password)
             server.sendmail(sender_email, email, message.as_string())
         
+        log.info(f"Correo de recuperación de contraseña enviado a {email}")
+
     except ValueError as ve:
         log.error(f"Error al enviar correo de recuperación de contraseña: {ve}")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
@@ -82,6 +84,4 @@ def send_password_reset_email(email):
     except Exception as e:
         log.error(f"Error desconocido al enviar correo de recuperación de contraseña: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error desconocido")
-
-    return "Se ha enviado un correo con instrucciones para recuperar la contraseña."
 

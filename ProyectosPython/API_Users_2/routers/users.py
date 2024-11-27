@@ -235,8 +235,8 @@ async def update_profile(profile_update: UserProfileUpdate, current_user: User =
 
     Ejemplo de solicitud:
     {
-        "firstname": "new_name",
-        "lastname": "new_surname",
+        "firstname": "newname",
+        "lastname": "newsurname",
         "dateofbirth": "1990-01-01",
         "country": "Argentina",
         "city": "Buenos Aires"
@@ -247,8 +247,8 @@ async def update_profile(profile_update: UserProfileUpdate, current_user: User =
         "id": 1,
         "username": "user123",
         "email": "user@example.com",
-        "firstname": "new_name",
-        "lastname": "new_surname",
+        "firstname": "newname",
+        "lastname": "newsurname",
         "dateofbirth": "1990-01-01",
         "country": "Argentina",
         "city": "Buenos Aires",

@@ -21,6 +21,8 @@ class Settings:
     if _pool == "None":
         _pool = None  # Convertir "None" de str a NoneType
 
+    SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY")
+
 
 settings = Settings()
 

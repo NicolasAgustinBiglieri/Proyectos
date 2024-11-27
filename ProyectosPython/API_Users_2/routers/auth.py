@@ -54,7 +54,7 @@ async def register(user: User_wPass):
         "dateofbirth": "1990-01-01",
         "country": "Argentina",
         "city": "Buenos Aires",
-        "password": "password123"
+        "password": "Password123!"
     }
 
     Ejemplo de respuesta:
